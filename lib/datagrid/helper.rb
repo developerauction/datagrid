@@ -4,6 +4,16 @@ require "action_view"
 module Datagrid
   module Helper
 
+    # Creates a new anonymous grid and outputs it as a table.
+    def datagrid(assets, datagrid_table_options = {}, &block)
+      grid_class = Class.new do
+        include Datagrid
+      end
+      grid_class.scope { assets }
+      grid_class.instance_eval(&block)
+      datagrid_table(grid_class.new, assets, datagrid_table_options)
+    end
+
     # Format an value from datagrid column with given name and for given model
     def datagrid_format_value(report, column_name, model)
       datagrid_renderer.format_value(report, column_name, model)
