@@ -12,6 +12,7 @@ module Datagrid
   autoload :ColumnNamesAttribute
   autoload :Ordering
   autoload :Configuration
+  autoload :Rows
 
   autoload :Helper
   ActionView::Base.send(:include, Datagrid::Helper)
@@ -33,6 +34,7 @@ module Datagrid
       include ::Datagrid::Columns
       include ::Datagrid::ColumnNamesAttribute
       include ::Datagrid::Ordering
+      include ::Datagrid::Rows
 
     end
   end # self.included
