@@ -23,6 +23,10 @@ module Datagrid
           url = generate_url(asset, value, column.options[:url])
         end
 
+        if column.options[:format]
+          value = @template.send column.options[:format], value
+        end
+
         if url
           @template.link_to(value, url)
         else

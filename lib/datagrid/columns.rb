@@ -64,7 +64,7 @@ module Datagrid
       end
 
       # Defines new datagrid column
-      # 
+      #
       # Arguments:
       #
       #   * <tt>name</tt> - column name
@@ -72,18 +72,19 @@ module Datagrid
       #   * <tt>block</tt> - proc to calculate a column value
       #
       # Available options:
-      #   
+      #
       #   * <tt>:html</tt> - determines if current column should be present in html table and how is it formatted
-      #   * <tt>:order</tt> - determines if this column could be sortable and how. 
-      #     The value of order is explicitly passed to ORM ordering method. 
+      #   * <tt>:order</tt> - determines if this column could be sortable and how.
+      #     The value of order is explicitly passed to ORM ordering method.
       #     Ex: <tt>"created_at, id"</tt> for ActiveRecord, <tt>[:created_at, :id]</tt> for Mongoid
-      #   * <tt>:order_desc</tt> - determines a descending order for given column 
+      #   * <tt>:order_desc</tt> - determines a descending order for given column
       #     (only in case when <tt>:order</tt> can not be easily reversed by ORM)
-      #   * <tt>:order_by_value</tt> - used in case it is easier to perform ordering at ruby level not on database level. 
-      #     Warning: using ruby to order large datasets is very unrecommended. 
+      #   * <tt>:order_by_value</tt> - used in case it is easier to perform ordering at ruby level not on database level.
+      #     Warning: using ruby to order large datasets is very unrecommended.
       #     If set to true - datagrid will use column value to order by this column
       #     If block is given - datagrid will use value returned from block
-      #   * <tt>:url</tt> - a proc with one argument, pass this option to easily convert the value into an URL
+      #   * <tt>:url</tt> - a proc with one argument (the asset), pass this option to easily convert the value into an URL
+      #   * <tt>:format</tt> - the name of a helper function through which the value will be passed before output
       #   * <tt>:before</tt> - determines the position of this column, by adding it before the column passed here
       #   * <tt>:after</tt> - determines the position of this column, by adding it after the column passed here
       #
@@ -123,7 +124,7 @@ module Datagrid
             end
           end
         else
-          # Ruby Object#format exists. 
+          # Ruby Object#format exists.
           # We don't want to change the behaviour and overwrite it.
           super
         end
@@ -188,7 +189,7 @@ module Datagrid
         self.rows(*column_names).unshift(self.header(*column_names))
       end
 
-      # Return Array of Hashes where keys are column names and values are column values 
+      # Return Array of Hashes where keys are column names and values are column values
       # for each row in filtered datagrid relation.
       #
       # Example:
@@ -243,7 +244,7 @@ module Datagrid
       # Returns all columns selected in grid instance
       #
       # Examples:
-      # 
+      #
       #   MyGrid.new.columns # => all defined columns
       #   grid = MyGrid.new(:column_names => [:id, :name])
       #   grid.columns # => id and name columns
@@ -277,7 +278,7 @@ module Datagrid
       # Gives ability to have a different formatting for CSV and HTML column value.
       #
       # Example:
-      #   
+      #
       #   column(:name) do |model|
       #     format(model.name) do |value|
       #       content_tag(:strong, value)
@@ -285,7 +286,7 @@ module Datagrid
       #   end
       #
       #   column(:company) do |model|
-      #     format(model.company.name) do 
+      #     format(model.company.name) do
       #       render :partial => "company_with_logo", :locals => {:company => model.company }
       #     end
       #   end
