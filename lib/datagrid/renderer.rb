@@ -18,11 +18,29 @@ module Datagrid
 
       value = column.html_value(@template, asset, grid)
 
-      url = column.options[:url] && column.options[:url].call(asset)
-      if url
-        @template.link_to(value, url)
+      if value
+        if column.options[:url]
+          url = generate_url(asset, value, column.options[:url])
+        end
+
+        if url
+          @template.link_to(value, url)
+        else
+          _safe(value)
+        end
+      end
+    end
+
+    def generate_url(asset, value, url_arg)
+      case url_arg
+      when Proc
+        @template.instance_exec asset, &url_arg
+      when Symbol
+        @template.send url_arg, value
+      when Array
+        url_arg + [value]
       else
-        _safe(value)
+        raise 'wtf kinda shit are you trying to feed me, garbage man?!'
       end
     end
 
