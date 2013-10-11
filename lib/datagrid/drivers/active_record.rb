@@ -4,20 +4,20 @@ module Datagrid
 
       def self.match?(scope)
         return false unless defined?(::ActiveRecord)
-        if scope.is_a?(Class) 
+        if scope.is_a?(Class)
           scope.ancestors.include?(::ActiveRecord::Base)
         else
-          scope.is_a?(::ActiveRecord::Relation) 
+          scope.is_a?(::ActiveRecord::Relation)
         end
       end
 
       def to_scope(scope)
         return scope if scope.is_a?(::ActiveRecord::Relation)
         # Model class or Active record association
-        # ActiveRecord association class hides itself under an Array 
+        # ActiveRecord association class hides itself under an Array
         # We can only reveal it by checking if it respond to some specific
         # to ActiveRecord method like #scoped
-        if scope.is_a?(Class) 
+        if scope.is_a?(Class)
           scope.scoped({})
         elsif scope.respond_to?(:scoped)
           scope.scoped
@@ -28,6 +28,14 @@ module Datagrid
 
       def where(scope, attribute, value)
         scope.where(attribute => value)
+      end
+
+      def where_blank(scope, attribute)
+        scope.where(attribute => [nil, ''])
+      end
+
+      def where_present(scope, attribute)
+        scope.where("#{scope.table_name}.#{attribute} is not null")
       end
 
       def asc(scope, order)
@@ -102,7 +110,7 @@ module Datagrid
         end
         result
       end
-      
+
       protected
 
       def prefix_table_name(scope, field)
@@ -110,8 +118,8 @@ module Datagrid
       end
 
       def contains_predicate
-        defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) && 
-          ::ActiveRecord::Base.connection.is_a?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) ? 
+        defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
+          ::ActiveRecord::Base.connection.is_a?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) ?
           'ilike' : 'like'
       end
 

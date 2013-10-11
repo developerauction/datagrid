@@ -76,6 +76,30 @@ class Datagrid::Filters::BaseFilter #:nodoc:
     options[:allow_blank]
   end
 
+  def blank_option?
+    options[:blank_option].present?
+  end
+
+  def present_option?
+    options[:present_option].present?
+  end
+
+  def blank_option_value
+    if options[:blank_option] == true
+      '<blank>'
+    else
+      options[:blank_option]
+    end
+  end
+
+  def present_option_value
+    if options[:present_option] == true
+      '<present>'
+    else
+      options[:present_option]
+    end
+  end
+
   def form_builder_helper_name
     self.class.form_builder_helper_name
   end
@@ -96,14 +120,20 @@ class Datagrid::Filters::BaseFilter #:nodoc:
     if !driver.has_column?(scope, name) && driver.to_scope(scope).respond_to?(name)
       driver.to_scope(scope).send(name, value)
     else
-      default_filter_where(driver, scope, value)
+      if present_option? && (value == present_option_value)
+        driver.where_present(scope, name)
+      elsif blank_option? && (value == blank_option_value)
+        driver.where_blank(scope, name)
+      else
+        default_filter_where(driver, scope, value)
+      end
     end
   end
 
   def format(value)
     value.nil? ? nil : value.to_s
   end
-  
+
   def dummy?
     options[:dummy]
   end

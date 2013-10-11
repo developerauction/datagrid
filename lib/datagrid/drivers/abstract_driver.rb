@@ -34,6 +34,14 @@ module Datagrid
         raise NotImplementedError
       end
 
+      def where_blank(scope, attribute)
+        raise NotImplementedError
+      end
+
+      def where_present(scope, attribute)
+        raise NotImplementedError
+      end
+
       def asc(scope, order)
         raise NotImplementedError
       end
@@ -53,7 +61,7 @@ module Datagrid
       def less_equal(scope, field, value)
         raise NotImplementedError
       end
-      
+
       def has_column?(scope, column_name)
         raise NotImplementedError
       end
