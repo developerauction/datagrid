@@ -15,6 +15,9 @@ describe Datagrid::Helper do
 
   before(:each) do
     allow(subject).to receive(:params).and_return({})
+    allow(subject).to receive(:request) do
+      Struct.new(:path, :query_parameters).new("/location", {})
+    end
     allow(subject).to receive(:url_for) do |options|
       options.is_a?(String) ? options : ["/location", options.to_param.presence].compact.join('?')
     end
@@ -596,6 +599,21 @@ describe Datagrid::Helper do
       expect(subject.datagrid_value(report, :name, entry)).to eq("<a href=\"/profile\">Star</a>")
     end
 
+    it "applies decorator" do
+      report = test_report do
+        scope {Entry}
+        decorate do |model|
+          Class.new(Struct.new(:model)) do
+            def name
+              model.name.upcase
+            end
+          end
+        end
+        column(:name, html: true)
+      end
+      entry = Entry.create!(name: 'hello')
+      expect(subject.datagrid_value(report, :name, entry)).to eq("HELLO")
+    end
   end
 
   describe ".datagrid_header" do

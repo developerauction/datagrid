@@ -313,8 +313,9 @@ module Datagrid
       #   grid.to_csv(:id, :name)
       #   grid.to_csv(:col_sep => ';')
       def to_csv(*column_names)
+        require "csv"
         options = column_names.extract_options!
-        csv_class.generate(
+        CSV.generate(
           {:headers => self.header(*column_names), :write_headers => true}.merge!(options)
         ) do |csv|
           each_with_batches do |asset|
@@ -531,19 +532,10 @@ module Datagrid
         end
       end
 
-      def csv_class
-        if RUBY_VERSION >= "1.9"
-          require 'csv'
-          CSV
-        else
-          require "fastercsv"
-          FasterCSV
-        end
-      end
-
       def value_from_html_block(context, asset, column)
         args = []
         remaining_arity = column.html_block.arity
+        asset = decorate(asset)
 
         if column.data?
           args << data_value(column, asset)
